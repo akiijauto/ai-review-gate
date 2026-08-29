@@ -1,0 +1,21 @@
+# レビュアー定義。軸を足すときはプロンプトを増やし、ここに配点を書く。
+model: gemini-2.5-flash
+pass_threshold: 80
+default_risk_tier: normal
+
+reviewers:
+  - name: factuality
+    prompt: prompts/factuality.md
+    axes:
+      - { name: factuality, max: 25 }   # 事実の正確さ・断定の根拠
+      - { name: policy,     max: 15 }   # 禁止表現・法令リスク
+  - name: structure
+    prompt: prompts/structure.md
+    axes:
+      - { name: structure,  max: 20 }   # 見出し構成・論理の流れ
+      - { name: coverage,   max: 10 }   # 読者の疑問への網羅
+  - name: clarity
+    prompt: prompts/clarity.md
+    axes:
+      - { name: clarity,    max: 20 }   # 文章の明瞭さ
+      - { name: tone,       max: 10 }   # トーンの一貫性
