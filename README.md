@@ -149,9 +149,6 @@ APIキーは環境変数から読み込まれます（`GeminiClient` は `genai.
 ```bash
 cp .env.example .env             # GOOGLE_API_KEY を記入
 
-# .env は自動では読み込まれないため、シェルへ読み込んでから実行する
-set -a && . ./.env && set +a
-
 # あるいは直接渡す
 export GOOGLE_API_KEY="your_key"
 ```
@@ -231,7 +228,7 @@ python -m review_gate.cli 記事.md --config configs/medical.yaml
 
 | 変数名 | 必須 | 説明 |
 | --- | --- | --- |
-| `GOOGLE_API_KEY` | レビュー実行時のみ | Gemini APIキー。`GeminiClient` は `genai.Client()` を引数なしで生成するため、キーはSDKが環境変数から読み込む（`.env.example` は `GOOGLE_API_KEY` を想定）。テスト実行には不要 |
+| `GOOGLE_API_KEY` | レビュー実行時のみ | Gemini APIキー。`GeminiClient` は `genai.Client()` を引数なしで生成するため、キーは**SDKが環境変数から読み込む**。CLI は起動時に `.env`（実行ディレクトリ → リポジトリ直下の順）を環境変数へ読み込むので、`.env` に書いておけば動く。既に環境変数にある値は上書きしない。テスト実行には不要 |
 
 ### config.yaml
 

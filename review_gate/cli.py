@@ -19,7 +19,32 @@ from .llm import GeminiClient
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def _load_dotenv() -> None:
+    """`.env` を環境変数へ読み込む。
+
+    APIキーはこのコードが直接読むのではなく、google-genai が環境変数
+    （GEMINI_API_KEY / GOOGLE_API_KEY）から拾う。そのため `.env` を置いただけでは
+    鍵が渡らず、これまでは自分で export する必要があった。
+    READMEが `cp .env.example .env` と案内している以上、置けば動くようにする。
+
+    python-dotenv が無くても CLI は動かす。テストは MockLLMClient で完結しており、
+    この依存を必要としないため（google-genai / tenacity を遅延importにしているのと同じ理由）。
+    """
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    # 引数なしの load_dotenv() は「呼び出し元ファイルの場所」を起点に探すため、
+    # 実行したディレクトリの .env を拾わない（2026-09-04 に実測）。場所を明示する。
+    # 既に環境変数にある値は上書きしない（明示的に渡した値のほうが強い）。
+    for candidate in (Path.cwd() / ".env", ROOT / ".env"):
+        if candidate.is_file():
+            load_dotenv(candidate)
+
+
 def main() -> int:
+    _load_dotenv()
+
     parser = argparse.ArgumentParser(description="マルチレビュアー品質ゲート")
     parser.add_argument("document", help="レビュー対象の文書ファイル")
     parser.add_argument("--config", default=str(ROOT / "config.yaml"))
